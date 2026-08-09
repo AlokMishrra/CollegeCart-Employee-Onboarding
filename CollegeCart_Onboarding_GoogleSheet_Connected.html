@@ -471,13 +471,14 @@
           <input type="text" name="emergencyName" required>
           <div class="error-msg">Please enter an emergency contact name.</div>
         </div>
-        <div class="field">
-          <label>Relationship</label>
-          <select name="emergencyRelationship">
+        <div class="field" data-required="true">
+          <label>Relationship<span class="req">*</span></label>
+          <select name="emergencyRelationship" required>
             <option value="">Select relationship</option>
             <option>Parent</option><option>Guardian</option><option>Sibling</option>
             <option>Spouse</option><option>Other</option>
           </select>
+          <div class="error-msg">Please select the relationship.</div>
         </div>
       </div>
       <div class="field" data-required="true">
@@ -854,41 +855,45 @@
           <option>Voter ID</option><option>Other</option>
         </select>
       </div>
-      <div class="field">
-        <label>Government ID Number <span class="opt-tag">Optional</span></label>
-        <div class="hint">Only provide this if it's genuinely required.</div>
-        <input type="text" name="govIdNumber">
+      <div class="field" data-required="true">
+        <label>Aadhaar Number<span class="req">*</span></label>
+        <div class="hint">Enter your 12-digit Aadhaar number.</div>
+        <input type="text" name="govIdNumber" required inputmode="numeric" pattern="[0-9]{12}" maxlength="12" placeholder="12-digit Aadhaar number">
+        <div class="error-msg">Please enter a valid 12-digit Aadhaar number.</div>
       </div>
-      <div class="field">
-        <label>Government ID Document <span class="opt-tag">Optional</span></label>
+      <div class="field" data-required="true">
+        <label>Aadhaar Document<span class="req">*</span></label>
         <div class="file-drop" id="govIdDrop">
-          <input type="file" id="govIdDocument" accept="image/png,image/jpeg,application/pdf">
+          <input type="file" id="govIdDocument" accept="image/png,image/jpeg,application/pdf" required>
           <div class="fd-icon">🪪</div>
-          <div class="fd-text">Click or drag your ID document here</div>
+          <div class="fd-text">Click or drag your Aadhaar document here</div>
           <div class="fd-sub">JPG, PNG or PDF, up to 5 MB</div>
         </div>
         <div class="file-preview" id="govIdPreview"><span id="govIdName"></span><span class="fp-remove" id="govIdRemove">Remove</span></div>
+        <div class="error-msg">Please upload your Aadhaar document (max 5 MB).</div>
       </div>
 
-      <div class="field">
-        <label>PAN Number <span class="opt-tag">Optional</span></label>
-        <div class="hint">Only collected where required for payroll/compliance.</div>
-        <input type="text" name="panNumber">
+      <div class="field" data-required="true">
+        <label>PAN Number<span class="req">*</span></label>
+        <div class="hint">Enter your PAN in uppercase format (e.g. ABCDE1234F).</div>
+        <input type="text" name="panNumber" required pattern="[A-Z]{5}[0-9]{4}[A-Z]{1}" maxlength="10" placeholder="ABCDE1234F" style="text-transform:uppercase;">
+        <div class="error-msg">Please enter a valid PAN number.</div>
       </div>
-      <div class="field">
-        <label>PAN Document <span class="opt-tag">Optional</span></label>
+      <div class="field" data-required="true">
+        <label>PAN Document<span class="req">*</span></label>
         <div class="file-drop" id="panDrop">
-          <input type="file" id="panDocument" accept="image/png,image/jpeg,application/pdf">
+          <input type="file" id="panDocument" accept="image/png,image/jpeg,application/pdf" required>
           <div class="fd-icon">📄</div>
           <div class="fd-text">Click or drag your PAN document here</div>
           <div class="fd-sub">JPG, PNG or PDF, up to 5 MB</div>
         </div>
         <div class="file-preview" id="panPreview"><span id="panName"></span><span class="fp-remove" id="panRemove">Remove</span></div>
+        <div class="error-msg">Please upload your PAN document (max 5 MB).</div>
       </div>
 
       <div class="privacy-note">Identity documents are stored in a restricted HR-only folder and are never placed in a publicly accessible location.</div>
 
-      <div class="section-footer"><button type="button" class="continue-btn ready">Continue →</button></div>
+      <div class="section-footer"><button type="button" class="continue-btn" disabled>Continue →</button></div>
     </div></div>
   </div>
 
