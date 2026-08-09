@@ -1,0 +1,1632 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CollegeCart — Intern Onboarding Form</title>
+<style>
+  :root{
+    --orange:#FF6B35; --orange2:#FF8F5E; --dark:#1A1A1A; --peach:#FFF6F1;
+    --border:#EFEFEF; --border2:#FFDCC7; --field:#B24A17; --gray:#888;
+    --text:#3A3A3A; --green:#1E8449;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0; padding:0; background:#FBFBFB;
+    font-family:'Helvetica Neue', Arial, sans-serif; color:var(--text);
+    font-size:14px; line-height:1.55;
+  }
+  a{color:var(--orange);}
+
+  #progressBar{position:fixed; top:0; left:0; height:4px; background:linear-gradient(90deg,var(--orange),var(--orange2)); width:0%; z-index:1000; transition:width .4s cubic-bezier(.4,0,.2,1);}
+
+  header.top{
+    background:#fff; border-bottom:1px solid var(--border); position:sticky; top:0; z-index:900;
+    padding:14px 20px;
+  }
+  .top-inner{max-width:820px; margin:0 auto; display:flex; align-items:center; gap:12px;}
+  .top-inner img{height:40px; width:auto;}
+  .top-brandtext{font-size:11px; color:var(--gray); line-height:1.4;}
+  .top-brandtext b{color:var(--dark);}
+
+  .hero{
+    background:linear-gradient(135deg,#FFF6F1 0%,#FFFFFF 60%);
+    padding:38px 20px 30px 20px; text-align:center; border-bottom:1px solid var(--border);
+  }
+  .hero .badge{
+    display:inline-block; background:var(--dark); color:#FFB690; font-size:10px; font-weight:800;
+    letter-spacing:2px; text-transform:uppercase; padding:6px 14px; border-radius:14px; margin-bottom:14px;
+  }
+  .hero h1{font-size:26px; font-weight:800; color:var(--dark); margin:0 0 8px 0;}
+  .hero h1 span{color:var(--orange);}
+  .hero p{max-width:480px; margin:0 auto; color:#666; font-size:13px;}
+
+  main{max-width:820px; margin:0 auto; padding:26px 20px 80px 20px;}
+
+  /* ---------- ACCORDION SECTION ---------- */
+  .section{
+    background:#fff; border:1px solid var(--border); border-radius:12px;
+    margin-bottom:16px; scroll-margin-top:80px; overflow:hidden;
+    transition:box-shadow .35s ease, border-color .35s ease, opacity .4s ease, transform .4s ease;
+  }
+  .section[data-state="locked"]{opacity:0.55;}
+  .section[data-state="active"]{border-color:var(--border2); box-shadow:0 6px 24px rgba(255,107,53,0.10);}
+  .section.just-unlocked{animation:sectionPop .55s cubic-bezier(.34,1.56,.64,1);}
+  @keyframes sectionPop{
+    0%{transform:scale(.97); opacity:0;}
+    60%{transform:scale(1.005);}
+    100%{transform:scale(1); opacity:1;}
+  }
+
+  .section-header{
+    width:100%; display:flex; align-items:center; gap:14px; padding:20px 24px;
+    background:none; border:none; text-align:left; cursor:pointer; font-family:inherit;
+  }
+  .section[data-state="locked"] .section-header{cursor:not-allowed;}
+  .section-num{
+    min-width:34px; height:34px; background:var(--dark); color:#fff; border-radius:9px;
+    display:flex; align-items:center; justify-content:center; font-weight:800; font-size:14px; flex-shrink:0;
+    transition:background .35s ease, transform .35s ease;
+  }
+  .section[data-state="completed"] .section-num{background:var(--green);}
+  .section[data-state="locked"] .section-num{background:#CCC;}
+  .section-headtext{flex:1; min-width:0;}
+  .section-headtext h2{font-size:16.5px; font-weight:800; color:var(--dark); margin:0;}
+  .section-sub{font-size:11.5px; color:var(--gray); margin-top:2px;}
+  .section-status{display:flex; align-items:center; gap:10px; flex-shrink:0;}
+.section-completion{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  min-width:46px;
+  height:24px;
+  padding:0 8px;
+  border:1px solid var(--border);
+  border-radius:12px;
+  background:#fff;
+  color:var(--gray);
+  font-size:10px;
+  font-weight:800;
+  letter-spacing:.2px;
+  transition:all .3s ease;
+}
+.section[data-state="completed"] .section-completion{
+  background:var(--peach);
+  border-color:var(--border2);
+  color:var(--orange);
+}
+.section[data-state="active"] .section-completion{
+  border-color:var(--border2);
+}
+.collegecart-logo{
+  height:40px;
+  width:auto;
+  max-width:190px;
+  object-fit:contain;
+  display:block;
+}
+
+  .lock-icon{font-size:15px; color:#bbb;}
+  .check-badge{
+    width:22px; height:22px; border-radius:50%; background:var(--green); color:#fff; font-size:12px;
+    display:flex; align-items:center; justify-content:center; font-weight:800; transform:scale(0);
+    transition:transform .4s cubic-bezier(.34,1.56,.64,1);
+  }
+  .section[data-state="completed"] .check-badge{transform:scale(1);}
+  .chevron{
+    width:11px; height:11px; border-right:2.5px solid var(--orange); border-bottom:2.5px solid var(--orange);
+    transform:rotate(45deg); transition:transform .4s cubic-bezier(.4,0,.2,1); margin-top:-4px;
+  }
+  .section.expanded .chevron{transform:rotate(-135deg); margin-top:4px;}
+
+  .section-body{
+    max-height:0; opacity:0; overflow:hidden;
+    transition:max-height .55s cubic-bezier(.4,0,.2,1), opacity .4s ease .05s;
+  }
+  .section.expanded .section-body{max-height:4000px; opacity:1;}
+  .section-body-inner{padding:2px 24px 24px 24px;}
+
+  .section-footer{display:flex; justify-content:flex-end; margin-top:6px;}
+  .continue-btn{
+    background:var(--dark); color:#fff; border:none; border-radius:24px; padding:11px 26px;
+    font-size:12.5px; font-weight:800; cursor:pointer; letter-spacing:0.2px;
+    transition:background .2s ease, transform .15s ease, box-shadow .3s ease;
+  }
+  .continue-btn:hover:not(:disabled){background:#000; transform:translateY(-1px);}
+  .continue-btn:disabled{background:#DDD; color:#999; cursor:not-allowed;}
+  .continue-btn.ready{
+    background:var(--orange); box-shadow:0 6px 18px rgba(255,107,53,0.35);
+    animation:readyPulse 1.6s ease-in-out infinite;
+  }
+  @keyframes readyPulse{
+    0%,100%{box-shadow:0 6px 18px rgba(255,107,53,0.30);}
+    50%{box-shadow:0 6px 24px rgba(255,107,53,0.55);}
+  }
+
+  /* ---------- FIELDS (unchanged core styling) ---------- */
+  .field{margin-bottom:18px;}
+  .field label{display:block; font-size:12.5px; font-weight:700; color:var(--dark); margin-bottom:5px;}
+  .field .hint{font-size:10.8px; color:var(--gray); margin-bottom:6px;}
+  .field .req{color:var(--orange); margin-left:2px;}
+  .field .opt-tag{font-size:9.5px; color:#aaa; font-weight:600; text-transform:uppercase; margin-left:6px;}
+
+  input[type=text], input[type=email], input[type=tel], input[type=date],
+  input[type=url], input[type=number], textarea, select{
+    width:100%; padding:10px 12px; font-size:13px; font-family:inherit; color:var(--dark);
+    border:1.5px solid var(--border); border-radius:8px; background:#fff; outline:none;
+    transition:border-color .15s ease, box-shadow .15s ease;
+  }
+  textarea{resize:vertical; min-height:70px;}
+  input:focus, textarea:focus, select:focus{
+    border-color:var(--orange); box-shadow:0 0 0 3px rgba(255,107,53,0.12);
+  }
+  select{appearance:none; background-image:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="%23FF6B35" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>'); background-repeat:no-repeat; background-position:right 12px center; background-size:14px; padding-right:34px;}
+
+  .row2{display:flex; gap:14px;}
+  .row2 > .field{flex:1; min-width:0;}
+  .row3{display:flex; gap:14px;}
+  .row3 > .field{flex:1; min-width:0;}
+
+  .choice-group{display:flex; flex-wrap:wrap; gap:9px;}
+  .choice-pill{position:relative;}
+  .choice-pill input{position:absolute; opacity:0; width:100%; height:100%; margin:0; cursor:pointer;}
+  .choice-pill span{
+    display:inline-block; padding:8px 15px; border:1.5px solid var(--border); border-radius:20px;
+    font-size:12px; font-weight:700; color:#555; background:#fff; cursor:pointer;
+    transition:all .2s cubic-bezier(.4,0,.2,1);
+  }
+  .choice-pill input:checked + span{background:var(--peach); border-color:var(--orange); color:var(--field); transform:scale(1.04);}
+  .choice-pill input:focus-visible + span{box-shadow:0 0 0 3px rgba(255,107,53,0.25);}
+
+  .subgroup{
+    background:var(--peach); border:1px solid var(--border2); border-radius:10px; padding:16px 16px 4px 16px;
+    margin:8px 0 18px 0;
+  }
+  .subgroup .subgroup-title{font-size:11.5px; font-weight:800; color:var(--field); text-transform:uppercase; letter-spacing:0.4px; margin-bottom:12px;}
+
+  /* conditional education blocks */
+  .edu-block{
+    max-height:0; opacity:0; overflow:hidden;
+    transition:max-height .5s cubic-bezier(.4,0,.2,1), opacity .35s ease;
+  }
+  .edu-block.show{max-height:2000px; opacity:1;}
+  .edu-hint{
+    font-size:11.5px; color:#aaa; font-style:italic; padding:6px 2px 14px 2px; display:block;
+  }
+  .edu-hint.hide{display:none;}
+
+  .skill-level-row{display:flex; align-items:center; justify-content:space-between; gap:10px; padding:8px 0; border-bottom:1px dashed #FFDCC7; font-size:12px;}
+  .skill-level-row:last-child{border-bottom:none;}
+  .skill-level-row select{width:150px; padding:6px 8px; font-size:11.5px;}
+
+  .file-drop{
+    border:2px dashed var(--border2); border-radius:10px; padding:20px; text-align:center; background:var(--peach);
+    cursor:pointer; transition:border-color .15s ease, background .15s ease;
+  }
+  .file-drop.drag{border-color:var(--orange); background:#FFEEE4;}
+  .file-drop input{display:none;}
+  .file-drop .fd-icon{font-size:22px; margin-bottom:6px;}
+  .file-drop .fd-text{font-size:12px; color:#555; font-weight:600;}
+  .file-drop .fd-sub{font-size:10.5px; color:#999; margin-top:3px;}
+  .file-preview{display:flex; align-items:center; gap:10px; margin-top:10px; font-size:11.5px; color:var(--field); font-weight:700; display:none;}
+  .file-preview img{height:44px; width:44px; object-fit:cover; border-radius:8px; border:1px solid var(--border2);}
+  .file-preview .fp-remove{margin-left:auto; color:#999; cursor:pointer; font-size:11px; font-weight:700; text-decoration:underline;}
+
+  .restricted-banner{
+    background:#1A1A1A; color:#FFB690; font-size:11px; font-weight:700; padding:10px 14px;
+    border-radius:8px; margin-bottom:18px; display:flex; align-items:center; gap:8px;
+  }
+  .privacy-note{
+    background:var(--peach); border-left:3px solid var(--orange); border-radius:4px; padding:10px 14px;
+    font-size:10.8px; color:#555; margin:10px 0 18px 0;
+  }
+
+  .declaration-block{display:flex; gap:12px; align-items:flex-start; padding:14px 0; border-bottom:1px solid var(--border);}
+  .declaration-block:last-child{border-bottom:none;}
+  .declaration-block input{margin-top:3px; width:17px; height:17px; accent-color:var(--orange); flex-shrink:0; cursor:pointer;}
+  .declaration-block p{margin:0; font-size:12px; color:var(--text);}
+
+  .submit-wrap{text-align:center; margin-top:8px;}
+  button#submitBtn{
+    background:linear-gradient(90deg,var(--orange),var(--orange2)); color:#fff; border:none; border-radius:30px;
+    padding:15px 46px; font-size:14.5px; font-weight:800; cursor:pointer; letter-spacing:0.3px;
+    box-shadow:0 8px 20px rgba(255,107,53,0.28); transition:transform .15s ease, box-shadow .15s ease;
+  }
+  button#submitBtn:hover{transform:translateY(-2px); box-shadow:0 10px 24px rgba(255,107,53,0.35);}
+  button#submitBtn:disabled{opacity:0.6; cursor:not-allowed; transform:none;}
+  .submit-note{font-size:10.8px; color:#999; margin-top:10px;}
+
+  .error-msg{color:#C0392B; font-size:11px; font-weight:700; margin-top:5px; display:none;}
+  .field.has-error input, .field.has-error textarea, .field.has-error select{border-color:#C0392B;}
+  .field.has-error .error-msg{display:block;}
+
+  #successScreen{display:none; max-width:520px; margin:60px auto; text-align:center; padding:0 20px;}
+  #successScreen .check{
+    width:70px; height:70px; border-radius:50%; background:var(--peach); border:2px solid var(--orange);
+    display:flex; align-items:center; justify-content:center; margin:0 auto 20px auto; font-size:32px; color:var(--orange);
+    animation:sectionPop .5s cubic-bezier(.34,1.56,.64,1);
+  }
+  #successScreen h2{font-size:22px; color:var(--dark); font-weight:800; margin:0 0 10px 0;}
+  #successScreen p{color:#666; font-size:13px;}
+
+  #submitOverlay{
+    display:none; position:fixed; inset:0; background:rgba(255,255,255,0.85); z-index:2000;
+    align-items:center; justify-content:center; flex-direction:column; gap:14px;
+  }
+  .spinner{width:38px; height:38px; border:4px solid #FFE0CC; border-top-color:var(--orange); border-radius:50%; animation:spin 0.8s linear infinite;}
+  @keyframes spin{to{transform:rotate(360deg);}}
+
+  footer.formfoot{text-align:center; padding:24px 20px; font-size:10.5px; color:#bbb;}
+
+  @media (max-width:600px){
+    .row2, .row3{flex-direction:column; gap:0;}
+    .section-body-inner{padding:2px 16px 20px 16px;}
+    .section-header{padding:16px 16px;}
+    .hero h1{font-size:21px;}
+  }
+
+  /* ---------- PREMIUM ACCORDION / EDUCATION UX ENHANCEMENTS ---------- */
+  .section-header{transition:background .25s ease, padding .25s ease;}
+  .section-header:hover{background:rgba(255,107,53,0.025);}
+  .section[data-state="active"] .section-header{background:rgba(255,107,53,0.018);}
+  .section[data-state="completed"] .section-header:hover{background:rgba(46,204,113,0.025);}
+  .section-body{display:grid;grid-template-rows:0fr;transition:grid-template-rows .38s cubic-bezier(.4,0,.2,1),opacity .28s ease;max-height:none;}
+  .section-body-inner{min-height:0;overflow:hidden;transform:translateY(-4px);transition:transform .38s ease;}
+  .section.expanded .section-body{grid-template-rows:1fr;opacity:1;}
+  .section.expanded .section-body-inner{transform:translateY(0);}
+  .edu-block{display:grid;grid-template-rows:0fr;max-height:none;opacity:0;transform:translateY(-5px);transition:grid-template-rows .38s cubic-bezier(.4,0,.2,1),opacity .25s ease,transform .38s ease;}
+  .edu-block > *{min-height:0;overflow:hidden;}
+  .edu-block.show{grid-template-rows:1fr;opacity:1;transform:translateY(0);}
+  .edu-block.edu-leaving{opacity:0;transform:translateY(-5px);}
+  .conditional-field{transition:opacity .2s ease,transform .2s ease;}
+  .section.just-unlocked{animation:sectionPop .45s cubic-bezier(.34,1.56,.64,1);}
+  .check-badge{will-change:transform;}
+  .edu-select-wrap{position:relative;}
+  .edu-note{font-size:10.8px;color:#777;margin:-2px 0 14px;padding:9px 11px;background:#fff;border:1px solid var(--border);border-radius:8px;}
+  .edu-result-grid{display:grid;grid-template-columns:170px 1fr;gap:14px;}
+  .field.is-hidden{display:none !important;}
+  .field[data-conditional-required="true"] label .req{display:inline;}
+  .field[data-conditional-required="false"] label .req{display:none;}
+  .field.has-error .error-msg{animation:errorIn .2s ease;}
+  @keyframes errorIn{from{opacity:0;transform:translateY(-3px)}to{opacity:1;transform:translateY(0)}}
+  @media (max-width:600px){.edu-result-grid{grid-template-columns:1fr;gap:0;}}
+
+  @media (prefers-reduced-motion: reduce){
+    *{animation-duration:0.01ms !important; transition-duration:0.01ms !important;}
+  }
+
+#overallProgress{
+  position:fixed;
+  top:8px;
+  right:16px;
+  z-index:1001;
+  font-size:10px;
+  font-weight:800;
+  color:var(--dark);
+  background:rgba(255,255,255,.92);
+  border:1px solid var(--border);
+  border-radius:12px;
+  padding:4px 8px;
+  backdrop-filter:blur(6px);
+  transition:all .3s ease;
+}
+@media(max-width:600px){
+  #overallProgress{top:7px; right:8px; font-size:9px; padding:3px 7px;}
+  .collegecart-logo{height:36px; max-width:160px;}
+  .section-completion{min-width:42px; height:22px; font-size:9px;}
+}
+
+</style>
+</head>
+<body>
+
+<div id="progressBar"></div>
+<div id="overallProgress" aria-live="polite" aria-label="Overall form completion">
+  <span id="overallProgressText">0% complete</span>
+</div>
+
+
+<header class="top">
+  <div class="top-inner">
+    <img src="https://i.ibb.co/RJ3M61s/Screenshot-2026-07-24-at-12-14-48-AM.gif" alt="CollegeCart logo" class="collegecart-logo" loading="eager" decoding="async" class="collegecart-logo">
+    <div class="top-brandtext"><b>CollegeCart</b> — Campus Commerce &amp; Student Services Platform<br>collegecarts.in</div>
+  </div>
+</header>
+
+<div class="hero">
+  <div class="badge">Intern Onboarding</div>
+  <h1>Welcome to <span>CollegeCart</span></h1>
+  <p>You're one step from joining the team. Fill in each section below — the next one unlocks automatically as you go. Sections marked HR/Admin are handled with restricted access.</p>
+</div>
+
+<main>
+<form id="onboardForm" novalidate>
+
+  <!-- SECTION A -->
+  <div class="section" id="sec-a" data-state="active" data-order="0">
+    <button type="button" class="section-header">
+      <div class="section-num">A</div>
+      <div class="section-headtext"><h2>Personal Information</h2><div class="section-sub">The basics — how we'll reach you.</div></div>
+      <div class="section-status"><div class="section-completion" aria-label="Section completion">0%</div><div class="check-badge">✓</div><div class="chevron"></div></div>
+    </button>
+    <div class="section-body"><div class="section-body-inner">
+
+      <div class="field" data-required="true">
+        <label>Full Name<span class="req">*</span></label>
+        <div class="hint">Enter your full legal name as it appears on your official identity document.</div>
+        <input type="text" name="fullName" required>
+        <div class="error-msg">Please enter your full name.</div>
+      </div>
+
+      <div class="field">
+        <label>Preferred Name <span class="opt-tag">Optional</span></label>
+        <input type="text" name="preferredName">
+      </div>
+
+      <div class="row2">
+        <div class="field" data-required="true">
+          <label>Personal Email Address<span class="req">*</span></label>
+          <input type="email" name="personalEmail" required>
+          <div class="error-msg">Please enter a valid email address.</div>
+        </div>
+        <div class="field">
+          <label>College / Professional Email <span class="opt-tag">Optional</span></label>
+          <input type="email" name="collegeEmail">
+        </div>
+      </div>
+
+      <div class="row2">
+        <div class="field" data-required="true">
+          <label>Mobile Number<span class="req">*</span></label>
+          <input type="tel" name="mobileNumber" required placeholder="+91 XXXXX XXXXX">
+          <div class="error-msg">Please enter your mobile number.</div>
+        </div>
+        <div class="field" data-required="true">
+          <label>WhatsApp Number<span class="req">*</span></label>
+          <input type="tel" name="whatsappNumber" required placeholder="+91 XXXXX XXXXX">
+          <div class="error-msg">Please enter your WhatsApp number.</div>
+        </div>
+      </div>
+
+      <div class="row2">
+        <div class="field" data-required="true">
+          <label>Date of Birth<span class="req">*</span></label>
+          <input type="date" name="dob" required>
+          <div class="error-msg">Please enter your date of birth.</div>
+        </div>
+        <div class="field">
+          <label>Gender <span class="opt-tag">Optional</span></label>
+          <div class="hint">Only collected where needed for HR records.</div>
+          <div class="choice-group">
+            <label class="choice-pill"><input type="radio" name="gender" value="Male"><span>Male</span></label>
+            <label class="choice-pill"><input type="radio" name="gender" value="Female"><span>Female</span></label>
+            <label class="choice-pill"><input type="radio" name="gender" value="Prefer not to say"><span>Prefer not to say</span></label>
+            <label class="choice-pill"><input type="radio" name="gender" value="Other"><span>Other</span></label>
+          </div>
+        </div>
+      </div>
+
+      <div class="section-footer"><button type="button" class="continue-btn" disabled>Continue →</button></div>
+    </div></div>
+  </div>
+
+  <!-- SECTION B -->
+  <div class="section" id="sec-b" data-state="locked" data-order="1">
+    <button type="button" class="section-header">
+      <div class="section-num">B</div>
+      <div class="section-headtext"><h2>Address</h2><div class="section-sub">Where you currently live and your permanent address.</div></div>
+      <div class="section-status"><div class="section-completion" aria-label="Section completion">0%</div><div class="check-badge">✓</div><div class="lock-icon">🔒</div><div class="chevron" style="display:none;"></div></div>
+    </button>
+    <div class="section-body"><div class="section-body-inner">
+
+      <div class="field" data-required="true">
+        <label>Current Address<span class="req">*</span></label>
+        <textarea name="currentAddress" required></textarea>
+        <div class="error-msg">Please enter your current address.</div>
+      </div>
+      <div class="field" data-required="true">
+        <label>Permanent Address<span class="req">*</span></label>
+        <textarea name="permanentAddress" required></textarea>
+        <div class="error-msg">Please enter your permanent address.</div>
+      </div>
+
+      <div class="row3">
+        <div class="field"><label>City</label><input type="text" name="city"></div>
+        <div class="field">
+          <label>State</label>
+          <select name="state">
+            <option value="">Select state</option>
+            <option>Andhra Pradesh</option><option>Arunachal Pradesh</option><option>Assam</option>
+            <option>Bihar</option><option>Chhattisgarh</option><option>Goa</option><option>Gujarat</option>
+            <option>Haryana</option><option>Himachal Pradesh</option><option>Jharkhand</option>
+            <option>Karnataka</option><option>Kerala</option><option>Madhya Pradesh</option>
+            <option>Maharashtra</option><option>Manipur</option><option>Meghalaya</option><option>Mizoram</option>
+            <option>Nagaland</option><option>Odisha</option><option>Punjab</option><option>Rajasthan</option>
+            <option>Sikkim</option><option>Tamil Nadu</option><option>Telangana</option><option>Tripura</option>
+            <option>Uttar Pradesh</option><option>Uttarakhand</option><option>West Bengal</option>
+            <option>Delhi (NCT)</option><option>Jammu &amp; Kashmir</option><option>Ladakh</option>
+            <option>Chandigarh</option><option>Puducherry</option><option>Other</option>
+          </select>
+        </div>
+        <div class="field"><label>PIN Code</label><input type="text" name="pinCode" inputmode="numeric" pattern="[0-9]{6}" maxlength="6" placeholder="6-digit PIN"></div>
+      </div>
+
+      <div class="section-footer"><button type="button" class="continue-btn" disabled>Continue →</button></div>
+    </div></div>
+  </div>
+
+  <!-- SECTION C -->
+  <div class="section" id="sec-c" data-state="locked" data-order="2">
+    <button type="button" class="section-header">
+      <div class="section-num">C</div>
+      <div class="section-headtext"><h2>Emergency Contact</h2><div class="section-sub">Who we should reach in case of an emergency.</div></div>
+      <div class="section-status"><div class="section-completion" aria-label="Section completion">0%</div><div class="check-badge">✓</div><div class="lock-icon">🔒</div><div class="chevron" style="display:none;"></div></div>
+    </button>
+    <div class="section-body"><div class="section-body-inner">
+
+      <div class="row2">
+        <div class="field" data-required="true">
+          <label>Emergency Contact Name<span class="req">*</span></label>
+          <input type="text" name="emergencyName" required>
+          <div class="error-msg">Please enter an emergency contact name.</div>
+        </div>
+        <div class="field">
+          <label>Relationship</label>
+          <select name="emergencyRelationship">
+            <option value="">Select relationship</option>
+            <option>Parent</option><option>Guardian</option><option>Sibling</option>
+            <option>Spouse</option><option>Other</option>
+          </select>
+        </div>
+      </div>
+      <div class="field" data-required="true">
+        <label>Emergency Contact Number<span class="req">*</span></label>
+        <input type="tel" name="emergencyNumber" required placeholder="+91 XXXXX XXXXX">
+        <div class="error-msg">Please enter an emergency contact number.</div>
+      </div>
+
+      <div class="section-footer"><button type="button" class="continue-btn" disabled>Continue →</button></div>
+    </div></div>
+  </div>
+
+  <!-- SECTION D -->
+  <div class="section" id="sec-d" data-state="locked" data-order="3">
+    <button type="button" class="section-header">
+      <div class="section-num">D</div>
+      <div class="section-headtext"><h2>Education</h2><div class="section-sub">Your academic background.</div></div>
+      <div class="section-status"><div class="section-completion" aria-label="Section completion">0%</div><div class="check-badge">✓</div><div class="lock-icon">🔒</div><div class="chevron" style="display:none;"></div></div>
+    </button>
+    <div class="section-body"><div class="section-body-inner">
+
+      <div class="field" data-required="true">
+        <label>Current Education Status<span class="req">*</span></label>
+        <div class="hint">Select your current academic stage. The form will show only the questions relevant to you.</div>
+        <div class="edu-select-wrap">
+          <select name="educationStatus" id="educationStatus" required aria-describedby="eduStatusHint">
+            <option value="">Select education status</option>
+            <option value="School student">School student</option>
+            <option value="Currently pursuing degree">Currently pursuing degree</option>
+            <option value="Degree completed">Degree completed</option>
+            <option value="Diploma">Diploma</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
+        <div class="error-msg" id="eduStatusError">Please select your current education status.</div>
+      </div>
+
+      <div class="edu-hint" id="eduHint">Select an option above to continue.</div>
+      <div class="edu-note" id="eduPathNote" style="display:none;"></div>
+
+      <!-- SCHOOL STUDENT -->
+      <div class="edu-block" id="eduSchool" data-edu-for="School student">
+        <div class="field" data-required="true" data-edu-field>
+          <label>Current School Name<span class="req">*</span></label>
+          <input type="text" name="previousSchool">
+          <div class="error-msg">Please enter your current school name.</div>
+        </div>
+        <div class="row2">
+          <div class="field" data-required="true" data-edu-field>
+            <label>Current Class / Grade<span class="req">*</span></label>
+            <select name="currentSchoolClass" id="currentSchoolClass">
+              <option value="">Select class</option>
+              <option>Class 6</option><option>Class 7</option><option>Class 8</option><option>Class 9</option>
+              <option>Class 10</option><option>Class 11</option><option>Class 12</option>
+            </select>
+            <div class="error-msg">Please select your current class.</div>
+          </div>
+          <div class="field" data-required="true" data-edu-field>
+            <label>School Board<span class="req">*</span></label>
+            <select name="schoolBoard">
+              <option value="">Select board</option>
+              <option>CBSE</option><option>ICSE</option><option>ISC</option><option>State Board</option>
+              <option>NIOS</option><option>IB</option><option>Cambridge</option><option>Other</option>
+            </select>
+            <div class="error-msg">Please select your school board.</div>
+          </div>
+        </div>
+
+        <div class="subgroup" id="schoolStreamWrap" style="display:none;">
+          <div class="subgroup-title">Class 11 / 12 Stream</div>
+          <div class="field" data-required="true" data-edu-field>
+            <label>Stream<span class="req">*</span></label>
+            <select name="schoolStream" id="schoolStream">
+              <option value="">Select stream</option>
+              <option>Science</option><option>Commerce</option><option>Arts / Humanities</option><option>Other</option>
+            </select>
+            <div class="error-msg">Please select your stream.</div>
+          </div>
+        </div>
+
+        <div class="subgroup" id="schoolClass10Wrap" style="display:none;">
+          <div class="subgroup-title">Class 10 Details</div>
+          <div class="row2">
+            <div class="field" data-required="true" data-edu-field><label>Class 10 School<span class="req">*</span></label><input type="text" name="class10School"></div>
+            <div class="field" data-required="true" data-edu-field><label>Class 10 Board<span class="req">*</span></label><input type="text" name="class10Board"></div>
+          </div>
+          <div class="row2">
+            <div class="field" data-required="true" data-edu-field><label>Class 10 Passing Year<span class="req">*</span></label><input type="text" name="class10Year" inputmode="numeric" maxlength="4" placeholder="e.g. 2025"></div>
+            <div class="field" data-required="true" data-edu-field><label>Class 10 Percentage / CGPA<span class="req">*</span></label><input type="number" name="class10Score" min="0" max="100" step="0.01" placeholder="e.g. 86.5"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- CURRENTLY PURSUING DEGREE -->
+      <div class="edu-block" id="eduPursuing" data-edu-for="Currently pursuing degree">
+        <div class="row2">
+          <div class="field" data-required="true" data-edu-field>
+            <label>College / University Name<span class="req">*</span></label>
+            <input type="text" name="collegeName">
+            <div class="error-msg">Please enter your college/university name.</div>
+          </div>
+          <div class="field" data-required="true" data-edu-field>
+            <label>Degree / Course<span class="req">*</span></label>
+            <select name="currentDegree" id="currentDegree">
+              <option value="">Select degree / course</option>
+              <option>B.Tech / BE</option><option>BCA</option><option>BBA</option><option>B.Com</option><option>BA</option>
+              <option>B.Sc</option><option>B.Pharm</option><option>MBBS</option><option>MBA</option><option>MCA</option>
+              <option>M.Tech</option><option>M.Sc</option><option>MA</option><option>M.Com</option><option>Diploma</option><option>Other</option>
+            </select>
+            <div class="error-msg">Please select your degree/course.</div>
+          </div>
+        </div>
+        <div class="field" id="otherDegreeWrap" data-required="true" data-edu-field style="display:none;">
+          <label>Specify Degree / Course<span class="req">*</span></label>
+          <input type="text" name="otherDegree">
+        </div>
+        <div class="field" data-required="true" data-edu-field>
+          <label>Specialization<span class="req">*</span></label>
+          <input type="text" name="specialization" placeholder="e.g. Computer Science Engineering">
+        </div>
+        <div class="row3">
+          <div class="field" data-required="true" data-edu-field>
+            <label>Current Year<span class="req">*</span></label>
+            <select name="currentYear" id="currentYear"><option value="">Select year</option></select>
+          </div>
+          <div class="field" data-required="true" data-edu-field>
+            <label>Current Semester<span class="req">*</span></label>
+            <select name="currentSemester" id="currentSemester">
+              <option value="">Select semester</option>
+              <option>Semester 1</option><option>Semester 2</option><option>Semester 3</option><option>Semester 4</option>
+              <option>Semester 5</option><option>Semester 6</option><option>Semester 7</option><option>Semester 8</option><option>Other</option>
+            </select>
+          </div>
+          <div class="field" data-required="true" data-edu-field>
+            <label>Expected Graduation Year<span class="req">*</span></label>
+            <input type="text" name="gradYear" inputmode="numeric" maxlength="4" placeholder="e.g. 2027">
+          </div>
+        </div>
+        <div class="subgroup">
+          <div class="subgroup-title">Most Recent Semester Result</div>
+          <div class="edu-result-grid">
+            <div class="field" data-required="true" data-edu-field>
+              <label>Result Type<span class="req">*</span></label>
+              <select name="recentResultType" id="recentResultType">
+                <option value="">Select type</option><option>CGPA</option><option>SGPA</option><option>Percentage</option><option>Other</option>
+              </select>
+            </div>
+            <div class="field" data-required="true" data-edu-field>
+              <label>Result Value<span class="req">*</span></label>
+              <input type="number" name="recentResultValue" id="recentResultValue" step="0.01" placeholder="e.g. 8.7">
+              <div class="hint" id="recentResultHint">Select a result type first.</div>
+              <div class="error-msg" id="recentResultError">Enter a valid result value.</div>
+            </div>
+          </div>
+          <input type="hidden" name="recentCgpaSgpa" id="recentCgpaSgpa">
+        </div>
+      </div>
+
+      <!-- DEGREE COMPLETED -->
+      <div class="edu-block" id="eduCompleted" data-edu-for="Degree completed">
+        <div class="row2">
+          <div class="field" data-required="true" data-edu-field><label>College / University Name<span class="req">*</span></label><input type="text" name="collegeName"></div>
+          <div class="field" data-required="true" data-edu-field>
+            <label>Degree / Course<span class="req">*</span></label>
+            <select name="currentDegree" id="completedDegree">
+              <option value="">Select degree / course</option>
+              <option>B.Tech / BE</option><option>BCA</option><option>BBA</option><option>B.Com</option><option>BA</option><option>B.Sc</option>
+              <option>B.Pharm</option><option>MBBS</option><option>MBA</option><option>MCA</option><option>M.Tech</option><option>M.Sc</option><option>MA</option><option>M.Com</option><option>Other</option>
+            </select>
+          </div>
+        </div>
+        <div class="field" data-required="true" data-edu-field><label>Specialization<span class="req">*</span></label><input type="text" name="specialization"></div>
+        <div class="row2">
+          <div class="field" data-required="true" data-edu-field><label>Graduation Year<span class="req">*</span></label><input type="text" name="gradYear" inputmode="numeric" maxlength="4" placeholder="e.g. 2026"></div>
+          <div class="field" data-required="true" data-edu-field>
+            <label>Result Type<span class="req">*</span></label>
+            <select name="completedResultType" id="completedResultType"><option value="">Select type</option><option>CGPA</option><option>Percentage</option><option>Other</option></select>
+          </div>
+        </div>
+        <div class="field" data-required="true" data-edu-field><label>Final Result<span class="req">*</span></label><input type="number" name="completedResultValue" id="completedResultValue" min="0" step="0.01" placeholder="Enter your final result"></div>
+      </div>
+
+      <!-- DIPLOMA -->
+      <div class="edu-block" id="eduDiploma" data-edu-for="Diploma">
+        <div class="row2">
+          <div class="field" data-required="true" data-edu-field><label>Institution Name<span class="req">*</span></label><input type="text" name="collegeName"></div>
+          <div class="field" data-required="true" data-edu-field><label>Diploma Course<span class="req">*</span></label><input type="text" name="currentDegree" placeholder="e.g. Diploma in Mechanical Engineering"></div>
+        </div>
+        <div class="field" data-required="true" data-edu-field>
+          <label>Current Status<span class="req">*</span></label>
+          <select name="diplomaStatus" id="diplomaStatus"><option value="">Select status</option><option>Pursuing</option><option>Completed</option></select>
+        </div>
+        <div id="diplomaPursuingWrap" style="display:none;">
+          <div class="row2">
+            <div class="field" data-required="true" data-edu-field><label>Current Year / Semester<span class="req">*</span></label><input type="text" name="currentYear" placeholder="e.g. 2nd Year / Semester 4"></div>
+            <div class="field" data-required="true" data-edu-field><label>Expected Completion Year<span class="req">*</span></label><input type="text" name="gradYear" inputmode="numeric" maxlength="4"></div>
+          </div>
+          <div class="row2">
+            <div class="field"><label>Recent Result Type</label><select name="diplomaRecentResultType"><option value="">Select type</option><option>CGPA</option><option>SGPA</option><option>Percentage</option><option>Other</option></select></div>
+            <div class="field"><label>Recent Result Value</label><input type="number" name="diplomaRecentResultValue" min="0" step="0.01"></div>
+          </div>
+        </div>
+        <div id="diplomaCompletedWrap" style="display:none;">
+          <div class="row2">
+            <div class="field" data-required="true" data-edu-field><label>Completion Year<span class="req">*</span></label><input type="text" name="diplomaCompletedYear" inputmode="numeric" maxlength="4"></div>
+            <div class="field" data-required="true" data-edu-field><label>Final Result Type<span class="req">*</span></label><select name="diplomaFinalResultType"><option value="">Select type</option><option>CGPA</option><option>Percentage</option><option>Other</option></select></div>
+          </div>
+          <div class="field" data-required="true" data-edu-field><label>Final Result<span class="req">*</span></label><input type="number" name="diplomaFinalResultValue" min="0" step="0.01"></div>
+        </div>
+      </div>
+
+      <!-- OTHER -->
+      <div class="edu-block" id="eduOther" data-edu-for="Other">
+        <div class="field" data-required="true" data-edu-field><label>Education Type<span class="req">*</span></label><input type="text" name="otherEducationType" placeholder="e.g. Certificate course, vocational program"></div>
+        <div class="row2">
+          <div class="field" data-required="true" data-edu-field><label>Institution Name<span class="req">*</span></label><input type="text" name="collegeName"></div>
+          <div class="field" data-required="true" data-edu-field><label>Course / Program<span class="req">*</span></label><input type="text" name="currentDegree"></div>
+        </div>
+        <div class="row2">
+          <div class="field" data-required="true" data-edu-field><label>Current Status<span class="req">*</span></label><select name="otherEducationStatus"><option value="">Select status</option><option>Pursuing</option><option>Completed</option></select></div>
+          <div class="field" data-required="true" data-edu-field><label>Completion Year<span class="req">*</span></label><input type="text" name="otherCompletionYear" inputmode="numeric" maxlength="4"></div>
+        </div>
+        <div class="row2">
+          <div class="field"><label>Result Type <span class="opt-tag">Optional</span></label><select name="otherResultType"><option value="">Select type</option><option>CGPA</option><option>SGPA</option><option>Percentage</option><option>Other</option></select></div>
+          <div class="field"><label>Relevant Score / Result <span class="opt-tag">Optional</span></label><input type="number" name="otherResultValue" min="0" step="0.01"></div>
+        </div>
+      </div>
+
+      <div class="section-footer"><button type="button" class="continue-btn" disabled>Continue →</button></div>
+    </div></div>
+  </div>
+
+  <!-- SECTION E -->
+  <div class="section" id="sec-e" data-state="locked" data-order="4">
+    <button type="button" class="section-header">
+      <div class="section-num">E</div>
+      <div class="section-headtext"><h2>Skills &amp; Experience</h2><div class="section-sub">What you're good at, and what you've built.</div></div>
+      <div class="section-status"><div class="section-completion" aria-label="Section completion">0%</div><div class="check-badge">✓</div><div class="lock-icon">🔒</div><div class="chevron" style="display:none;"></div></div>
+    </button>
+    <div class="section-body"><div class="section-body-inner">
+
+      <div class="field">
+        <label>Primary Skills</label>
+        <div class="choice-group" id="skillsGroup"></div>
+      </div>
+
+      <div class="subgroup" id="skillLevelWrap" style="display:none;">
+        <div class="subgroup-title">Skill Level</div>
+        <div id="skillLevelList"></div>
+      </div>
+
+      <div class="field">
+        <label>Tools / Software You Know</label>
+        <div class="hint">Example: Canva, Figma, Excel, Google Sheets, Notion, WordPress, React, etc.</div>
+        <textarea name="tools"></textarea>
+      </div>
+
+      <div class="field">
+        <label>Previous Internship / Work Experience</label>
+        <div class="hint">If none, just write "No previous experience".</div>
+        <textarea name="previousExperience"></textarea>
+      </div>
+
+      <div class="field">
+        <label>Recent Project</label>
+        <div class="hint">Include: project name, problem solved, your role, technologies/tools used, and the result.</div>
+        <textarea name="recentProject" style="min-height:100px;"></textarea>
+      </div>
+
+      <div class="row3">
+        <div class="field"><label>Portfolio</label><input type="url" name="portfolio" placeholder="https://"></div>
+        <div class="field"><label>LinkedIn Profile</label><input type="url" name="linkedin" placeholder="https://"></div>
+        <div class="field"><label>GitHub / Behance / Dribbble</label><input type="url" name="github" placeholder="https://"></div>
+      </div>
+
+      <div class="section-footer"><button type="button" class="continue-btn ready">Continue →</button></div>
+    </div></div>
+  </div>
+
+  <!-- SECTION F -->
+  <div class="section" id="sec-f" data-state="locked" data-order="5">
+    <button type="button" class="section-header">
+      <div class="section-num">F</div>
+      <div class="section-headtext"><h2>CollegeCart Role</h2><div class="section-sub">The role you're joining, and what you bring to it.</div></div>
+      <div class="section-status"><div class="section-completion" aria-label="Section completion">0%</div><div class="check-badge">✓</div><div class="lock-icon">🔒</div><div class="chevron" style="display:none;"></div></div>
+    </button>
+    <div class="section-body"><div class="section-body-inner">
+
+      <div class="field">
+        <label>Position Applied / Selected For</label>
+        <select name="position">
+          <option value="">Select position</option>
+          <option>Sales &amp; Business Development Intern</option>
+          <option>Marketing Intern</option>
+          <option>Product Management Intern</option>
+          <option>Operations Intern</option>
+          <option>Social Media Intern</option>
+          <option>Technology Intern</option>
+          <option>Other</option>
+        </select>
+      </div>
+
+      <div class="field"><label>Why Do You Want to Join CollegeCart?</label><textarea name="whyJoin"></textarea></div>
+      <div class="field"><label>What Do You Expect to Learn?</label><textarea name="expectLearn"></textarea></div>
+      <div class="field"><label>What Can You Contribute to CollegeCart?</label><textarea name="contribute"></textarea></div>
+
+      <div class="field">
+        <label>Weekly Availability</label>
+        <div class="choice-group">
+          <label class="choice-pill"><input type="radio" name="availability" value="10–15 hours"><span>10–15 hours</span></label>
+          <label class="choice-pill"><input type="radio" name="availability" value="15–20 hours"><span>15–20 hours</span></label>
+          <label class="choice-pill"><input type="radio" name="availability" value="20–30 hours"><span>20–30 hours</span></label>
+          <label class="choice-pill"><input type="radio" name="availability" value="30+ hours"><span>30+ hours</span></label>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Preferred Working Mode</label>
+        <div class="choice-group">
+          <label class="choice-pill"><input type="radio" name="workMode" value="Remote"><span>Remote</span></label>
+          <label class="choice-pill"><input type="radio" name="workMode" value="Hybrid"><span>Hybrid</span></label>
+          <label class="choice-pill"><input type="radio" name="workMode" value="On-site"><span>On-site</span></label>
+        </div>
+      </div>
+
+      <div class="field"><label>Available Joining Date</label><input type="date" name="joiningDate"></div>
+
+      <div class="section-footer"><button type="button" class="continue-btn ready">Continue →</button></div>
+    </div></div>
+  </div>
+
+  <!-- SECTION G -->
+  <div class="section" id="sec-g" data-state="locked" data-order="6">
+    <button type="button" class="section-header">
+      <div class="section-num">G</div>
+      <div class="section-headtext"><h2>Photograph</h2><div class="section-sub">Used for your intern ID card, employee directory, and portal profile.</div></div>
+      <div class="section-status"><div class="section-completion" aria-label="Section completion">0%</div><div class="check-badge">✓</div><div class="lock-icon">🔒</div><div class="chevron" style="display:none;"></div></div>
+    </button>
+    <div class="section-body"><div class="section-body-inner">
+
+      <div class="field" data-required="true">
+        <label>Profile Photograph<span class="req">*</span></label>
+        <div class="hint">Passport-style, clear face, JPG/PNG, maximum 5 MB.</div>
+        <div class="file-drop" id="photoDrop">
+          <input type="file" id="profilePhoto" accept="image/png,image/jpeg">
+          <div class="fd-icon">📷</div>
+          <div class="fd-text">Click or drag your photo here</div>
+          <div class="fd-sub">JPG or PNG, up to 5 MB</div>
+        </div>
+        <div class="file-preview" id="photoPreview"><img id="photoThumb"><span id="photoName"></span><span class="fp-remove" id="photoRemove">Remove</span></div>
+        <div class="error-msg" id="photoError">Please upload a profile photograph (max 5 MB).</div>
+      </div>
+
+      <div class="section-footer"><button type="button" class="continue-btn" disabled>Continue →</button></div>
+    </div></div>
+  </div>
+
+  <!-- SECTION H -->
+  <div class="section" id="sec-h" data-state="locked" data-order="7">
+    <button type="button" class="section-header">
+      <div class="section-num">H</div>
+      <div class="section-headtext"><h2>Identity &amp; Compliance</h2><div class="section-sub">Collected only where genuinely needed.</div></div>
+      <div class="section-status"><div class="section-completion" aria-label="Section completion">0%</div><div class="check-badge">✓</div><div class="lock-icon">🔒</div><div class="chevron" style="display:none;"></div></div>
+    </button>
+    <div class="section-body"><div class="section-body-inner">
+
+      <div class="restricted-banner">🔒 This section is restricted to HR/Admin access only.</div>
+
+      <div class="field">
+        <label>Government ID Type <span class="opt-tag">Optional</span></label>
+        <select name="govIdType">
+          <option value="">Select ID type</option>
+          <option>Aadhaar</option><option>Passport</option><option>Driving Licence</option>
+          <option>Voter ID</option><option>Other</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Government ID Number <span class="opt-tag">Optional</span></label>
+        <div class="hint">Only provide this if it's genuinely required.</div>
+        <input type="text" name="govIdNumber">
+      </div>
+      <div class="field">
+        <label>Government ID Document <span class="opt-tag">Optional</span></label>
+        <div class="file-drop" id="govIdDrop">
+          <input type="file" id="govIdDocument" accept="image/png,image/jpeg,application/pdf">
+          <div class="fd-icon">🪪</div>
+          <div class="fd-text">Click or drag your ID document here</div>
+          <div class="fd-sub">JPG, PNG or PDF, up to 5 MB</div>
+        </div>
+        <div class="file-preview" id="govIdPreview"><span id="govIdName"></span><span class="fp-remove" id="govIdRemove">Remove</span></div>
+      </div>
+
+      <div class="field">
+        <label>PAN Number <span class="opt-tag">Optional</span></label>
+        <div class="hint">Only collected where required for payroll/compliance.</div>
+        <input type="text" name="panNumber">
+      </div>
+      <div class="field">
+        <label>PAN Document <span class="opt-tag">Optional</span></label>
+        <div class="file-drop" id="panDrop">
+          <input type="file" id="panDocument" accept="image/png,image/jpeg,application/pdf">
+          <div class="fd-icon">📄</div>
+          <div class="fd-text">Click or drag your PAN document here</div>
+          <div class="fd-sub">JPG, PNG or PDF, up to 5 MB</div>
+        </div>
+        <div class="file-preview" id="panPreview"><span id="panName"></span><span class="fp-remove" id="panRemove">Remove</span></div>
+      </div>
+
+      <div class="privacy-note">Identity documents are stored in a restricted HR-only folder and are never placed in a publicly accessible location.</div>
+
+      <div class="section-footer"><button type="button" class="continue-btn ready">Continue →</button></div>
+    </div></div>
+  </div>
+
+  <!-- SECTION J -->
+  <div class="section" id="sec-j" data-state="locked" data-order="8">
+    <button type="button" class="section-header">
+      <div class="section-num">J</div>
+      <div class="section-headtext"><h2>Declaration</h2><div class="section-sub">Please confirm the following before submitting.</div></div>
+      <div class="section-status"><div class="section-completion" aria-label="Section completion">0%</div><div class="check-badge">✓</div><div class="lock-icon">🔒</div><div class="chevron" style="display:none;"></div></div>
+    </button>
+    <div class="section-body"><div class="section-body-inner">
+
+      <div class="declaration-block">
+        <input type="checkbox" name="declaration1" id="declaration1" required>
+        <p>I confirm that the information provided by me in this onboarding form is accurate and complete to the best of my knowledge. I understand that inaccurate or fraudulent information may result in cancellation of my internship or termination of my engagement with CollegeCart.</p>
+      </div>
+      <div class="declaration-block">
+        <input type="checkbox" name="declaration2" id="declaration2" required>
+        <p>I agree to comply with CollegeCart's policies, confidentiality requirements, professional standards, and instructions provided by my reporting manager.</p>
+      </div>
+      <div class="declaration-block">
+        <input type="checkbox" name="declaration3" id="declaration3" required>
+        <p>I understand that any confidential information, customer information, business information, credentials, documents, product information, and internal processes accessed during my internship must not be disclosed or misused.</p>
+      </div>
+      <div class="error-msg" id="declarationError" style="margin-top:8px;">Please confirm all three declarations to continue.</div>
+
+      <div class="submit-wrap" style="margin-top:18px;">
+        <button type="submit" id="submitBtn">Submit Application</button>
+        <div class="submit-note">By submitting, your responses are recorded securely with CollegeCart HR.</div>
+      </div>
+    </div></div>
+  </div>
+
+</form>
+
+<div id="successScreen">
+  <div class="check">✓</div>
+  <h2>You're all set!</h2>
+  <p>Thanks for completing your onboarding form. Our team will review your details and reach out with next steps shortly. Welcome to CollegeCart!</p>
+</div>
+
+</main>
+
+<div id="submitOverlay"><div class="spinner"></div><div style="font-size:12.5px; color:#555; font-weight:700;">Submitting your details…</div></div>
+
+<iframe name="hiddenTargetFrame" id="hiddenTargetFrame" style="display:none;"></iframe>
+
+<footer class="formfoot">CollegeCart — Intern Onboarding &nbsp;|&nbsp; collegecarts.in &nbsp;|&nbsp; contact@collegecarts.in</footer>
+
+<script>
+/* ---------- CONFIG ---------- */
+const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyOe0VUCT2U8AJtElFoBQkqBRSCjUDT1XZGbL650ZpWU-rMTkmOcs9CVljCek6Y4FnT/exec";
+
+const form = document.getElementById('onboardForm');
+const sections = Array.from(document.querySelectorAll('.section'));
+
+/* ---------- ACCORDION CORE ---------- */
+function setSectionState(section, state) {
+  section.dataset.state = state;
+  const lockIcon = section.querySelector('.lock-icon');
+  const chevron = section.querySelector('.chevron');
+  const header = section.querySelector('.section-header');
+  const body = section.querySelector('.section-body');
+  const expanded = state !== 'locked' && section.classList.contains('expanded');
+  if (state === 'locked') {
+    if (lockIcon) lockIcon.style.display = 'inline';
+    if (chevron) chevron.style.display = 'none';
+    section.classList.remove('expanded');
+  } else {
+    if (lockIcon) lockIcon.style.display = 'none';
+    if (chevron) chevron.style.display = 'inline-block';
+  }
+  if (header) header.setAttribute('aria-expanded', String(expanded));
+  if (body) body.setAttribute('aria-hidden', String(!expanded));
+}
+
+function expandSection(section, { scroll = true } = {}) {
+  if (!section || section.dataset.state === 'locked') return;
+  sections.forEach(s => {
+    if (s !== section) {
+      s.classList.remove('expanded');
+      const h = s.querySelector('.section-header');
+      const b = s.querySelector('.section-body');
+      if (h) h.setAttribute('aria-expanded','false');
+      if (b) b.setAttribute('aria-hidden','true');
+    }
+  });
+  section.classList.add('expanded');
+  const header = section.querySelector('.section-header');
+  const body = section.querySelector('.section-body');
+  if (header) header.setAttribute('aria-expanded','true');
+  if (body) body.setAttribute('aria-hidden','false');
+  if (scroll) {
+    setTimeout(() => section.scrollIntoView({ behavior: 'smooth', block: 'start' }), 180);
+  }
+}
+
+function collapseSection(section) {
+  section.classList.remove('expanded');
+  const header = section.querySelector('.section-header');
+  const body = section.querySelector('.section-body');
+  if (header) header.setAttribute('aria-expanded','false');
+  if (body) body.setAttribute('aria-hidden','true');
+}
+
+function unlockNext(currentSection) {
+  const idx = sections.indexOf(currentSection);
+  const next = sections[idx + 1];
+  if (!next) return;
+  setSectionState(next, 'active');
+  next.classList.add('just-unlocked');
+  setTimeout(() => next.classList.remove('just-unlocked'), 600);
+  expandSection(next);
+}
+
+function completeSection(section) {
+  if (!section || section.dataset.state === 'locked') return;
+  if (!sectionIsExactlyComplete(section)) {
+    refreshContinueButton(section);
+    return;
+  }
+  if (section.dataset.state === 'completed') return;
+  setSectionState(section, 'completed');
+  collapseSection(section);
+  unlockNext(section);
+  updateProgress();
+}
+
+sections.forEach(section => {
+  const header = section.querySelector('.section-header');
+  const body = section.querySelector('.section-body');
+  const headerId = section.id + '-header';
+  const bodyId = section.id + '-body';
+  if (header) {
+    header.id = headerId;
+    header.setAttribute('aria-controls', bodyId);
+    header.setAttribute('aria-expanded', 'false');
+  }
+  if (body) {
+    body.id = bodyId;
+    body.setAttribute('aria-hidden', 'true');
+  }
+  header.addEventListener('click', () => {
+    if (section.dataset.state === 'locked') return;
+    if (section.classList.contains('expanded')) {
+      collapseSection(section);
+    } else {
+      expandSection(section, { scroll: section.dataset.state === 'completed' });
+    }
+  });
+});
+
+expandSection(sections[0], { scroll: false });
+
+/* ---------- PER-SECTION VALIDITY ---------- */
+
+
+function fieldIsVisibleAndEnabled(field) {
+  if (!field || field.classList.contains('is-hidden')) return false;
+  const style = getComputedStyle(field);
+  if (style.display === 'none' || style.visibility === 'hidden') return false;
+  const control = field.querySelector('input,textarea,select');
+  return !!control && !control.disabled;
+}
+
+function validateResultValue(type, value) {
+  if (!type || value === '') return true;
+  const n = Number(value);
+  if (!Number.isFinite(n) || n < 0) return false;
+  if (type === 'CGPA' || type === 'SGPA') return n <= 10;
+  if (type === 'Percentage') return n <= 100;
+  return true;
+}
+
+function updateRequiredState(field, required) {
+  if (!field) return;
+  field.dataset.required = required ? 'true' : 'false';
+  field.dataset.conditionalRequired = required ? 'true' : 'false';
+  const control = field.querySelector('input,textarea,select');
+  if (control) control.required = !!required;
+}
+
+function setEduBlockActive(block, active) {
+  if (!block) return;
+  block.classList.toggle('show', active);
+  block.querySelectorAll('[data-edu-field]').forEach(field => {
+    field.classList.toggle('is-hidden', !active);
+    const controls = field.querySelectorAll('input,textarea,select');
+    controls.forEach(control => { control.disabled = !active; });
+  });
+}
+
+function clearEduBlock(block) {
+  if (!block) return;
+  block.querySelectorAll('input,textarea,select').forEach(control => {
+    if (control.type !== 'hidden') {
+      if (control.type === 'checkbox' || control.type === 'radio') control.checked = false;
+      else control.value = '';
+    }
+    control.disabled = true;
+    control.required = false;
+  });
+  block.querySelectorAll('[data-edu-field]').forEach(field => {
+    field.dataset.required = 'false';
+    field.classList.remove('has-error');
+  });
+}
+
+const eduBlocks = Array.from(document.querySelectorAll('.edu-block'));
+const eduHint = document.getElementById('eduHint');
+const eduPathNote = document.getElementById('eduPathNote');
+const educationStatus = document.getElementById('educationStatus');
+
+const DEGREE_DURATIONS = {
+  'B.Tech / BE': 4, 'BCA': 3, 'BBA': 3, 'B.Com': 3, 'BA': 3, 'B.Sc': 3,
+  'B.Pharm': 4, 'MBBS': 5, 'MBA': 2, 'MCA': 2, 'M.Tech': 2, 'M.Sc': 2,
+  'MA': 2, 'M.Com': 2
+};
+
+function populateYearOptions(degree) {
+  const select = document.getElementById('currentYear');
+  if (!select) return;
+  const old = select.value;
+  const duration = DEGREE_DURATIONS[degree] || 4;
+  select.innerHTML = '<option value="">Select year</option>';
+  for (let i=1;i<=duration;i++) select.insertAdjacentHTML('beforeend', `<option>${i}${i===1?'st':i===2?'nd':i===3?'rd':'th'} Year</option>`);
+  if (degree === 'Other') select.insertAdjacentHTML('beforeend','<option>Other</option>');
+  if ([...select.options].some(o => o.value === old)) select.value = old;
+  const sem = document.getElementById('currentSemester');
+  if (sem) {
+    const maxSem = duration * 2;
+    [...sem.options].forEach(o => {
+      if (/^Semester \d+$/.test(o.value)) {
+        const n = Number(o.value.replace('Semester ',''));
+        o.hidden = n > maxSem;
+        o.disabled = n > maxSem;
+      }
+    });
+    if (sem.selectedOptions[0] && sem.selectedOptions[0].disabled) sem.value='';
+  }
+}
+
+function setResultConstraints(type, input, hintEl) {
+  if (!input) return;
+  input.min = '0';
+  if (type === 'CGPA' || type === 'SGPA') {
+    input.max = '10';
+    input.placeholder = 'e.g. 8.7';
+    if (hintEl) hintEl.textContent = 'Enter a value from 0 to 10.';
+  } else if (type === 'Percentage') {
+    input.max = '100';
+    input.placeholder = 'e.g. 82.5';
+    if (hintEl) hintEl.textContent = 'Enter a percentage from 0 to 100.';
+  } else {
+    input.removeAttribute('max');
+    input.placeholder = 'Enter your result';
+    if (hintEl) hintEl.textContent = 'Enter the numeric result exactly as reported.';
+  }
+}
+
+function updateEducationConditionals({ clearOld = true } = {}) {
+  const status = educationStatus ? educationStatus.value : '';
+  eduBlocks.forEach(block => {
+    const active = block.dataset.eduFor.split(',').map(s=>s.trim()).includes(status);
+    if (!active && clearOld) clearEduBlock(block);
+    setEduBlockActive(block, active);
+  });
+  if (!status) {
+    eduHint.classList.remove('hide');
+    if (eduPathNote) eduPathNote.style.display='none';
+  } else {
+    eduHint.classList.add('hide');
+    const notes = {
+      'School student':'We will only ask for school-level information relevant to your current class.',
+      'Currently pursuing degree':'We will collect your current course, semester and most recent academic result.',
+      'Degree completed':'We will collect your completed degree and final academic result.',
+      'Diploma':'We will tailor the fields to whether your diploma is pursuing or completed.',
+      'Other':'We will collect only the education details relevant to your program.'
+    };
+    if (eduPathNote) { eduPathNote.textContent=notes[status] || ''; eduPathNote.style.display='block'; }
+  }
+  const classVal = document.getElementById('currentSchoolClass')?.value || '';
+  const streamWrap = document.getElementById('schoolStreamWrap');
+  const class10Wrap = document.getElementById('schoolClass10Wrap');
+  const isSenior = status === 'School student' && (classVal === 'Class 11' || classVal === 'Class 12');
+  const hasCompleted10 = status === 'School student' && ['Class 11','Class 12'].includes(classVal);
+  if (streamWrap) {
+    streamWrap.style.display = isSenior ? 'block' : 'none';
+    streamWrap.querySelectorAll('[data-edu-field]').forEach(f=>updateRequiredState(f,isSenior));
+    streamWrap.querySelectorAll('input,select').forEach(c=>c.disabled=!isSenior);
+  }
+  if (class10Wrap) {
+    class10Wrap.style.display = hasCompleted10 ? 'block' : 'none';
+    class10Wrap.querySelectorAll('[data-edu-field]').forEach(f=>updateRequiredState(f,hasCompleted10));
+    class10Wrap.querySelectorAll('input,select').forEach(c=>c.disabled=!hasCompleted10);
+  }
+  const degree = document.getElementById('currentDegree')?.value || '';
+  populateYearOptions(degree);
+  const otherDegreeWrap = document.getElementById('otherDegreeWrap');
+  if (otherDegreeWrap) {
+    const other = status === 'Currently pursuing degree' && degree === 'Other';
+    otherDegreeWrap.style.display=other?'block':'none';
+    updateRequiredState(otherDegreeWrap,other);
+    otherDegreeWrap.querySelectorAll('input').forEach(c=>c.disabled=!other);
+  }
+  const diplomaStatus = document.getElementById('diplomaStatus')?.value || '';
+  const dp = document.getElementById('diplomaPursuingWrap');
+  const dc = document.getElementById('diplomaCompletedWrap');
+  if (dp) {
+    const active = status === 'Diploma' && diplomaStatus === 'Pursuing'; dp.style.display=active?'block':'none';
+    dp.querySelectorAll('[data-edu-field]').forEach(f=>updateRequiredState(f,active)); dp.querySelectorAll('input,select').forEach(c=>c.disabled=!active);
+  }
+  if (dc) {
+    const active = status === 'Diploma' && diplomaStatus === 'Completed'; dc.style.display=active?'block':'none';
+    dc.querySelectorAll('[data-edu-field]').forEach(f=>updateRequiredState(f,active)); dc.querySelectorAll('input,select').forEach(c=>c.disabled=!active);
+  }
+  updateRecentResultCompatibility();
+  updateCompletedResultConstraints();
+  refreshContinueButton(document.getElementById('sec-d'));
+}
+
+function updateRecentResultCompatibility() {
+  const type = document.getElementById('recentResultType')?.value || '';
+  const value = document.getElementById('recentResultValue')?.value || '';
+  const hidden = document.getElementById('recentCgpaSgpa');
+  if (hidden) hidden.value = value && type ? `${value} ${type}` : '';
+  setResultConstraints(type, document.getElementById('recentResultValue'), document.getElementById('recentResultHint'));
+}
+
+function updateCompletedResultConstraints() {
+  const type = document.getElementById('completedResultType')?.value || '';
+  setResultConstraints(type, document.getElementById('completedResultValue'), null);
+}
+
+educationStatus.addEventListener('change', () => updateEducationConditionals({clearOld:true}));
+document.getElementById('currentSchoolClass').addEventListener('change', () => updateEducationConditionals({clearOld:false}));
+document.getElementById('currentDegree').addEventListener('change', () => updateEducationConditionals({clearOld:false}));
+document.getElementById('recentResultType').addEventListener('change', updateRecentResultCompatibility);
+document.getElementById('recentResultValue').addEventListener('input', updateRecentResultCompatibility);
+document.getElementById('completedResultType').addEventListener('change', updateCompletedResultConstraints);
+document.getElementById('diplomaStatus').addEventListener('change', () => updateEducationConditionals({clearOld:false}));
+
+function sectionRequiredValid(section) {
+  const fields = section.querySelectorAll('.field[data-required="true"]');
+  for (const f of fields) {
+    if (!fieldIsVisibleAndEnabled(f)) continue;
+    const controls = f.querySelectorAll('input,textarea,select');
+    if (!controls.length) continue;
+    const el = controls[0];
+    if (el.type === 'radio') {
+      if (!section.querySelector(`input[name="${el.name}"]:checked`)) return false;
+    } else if (el.type === 'checkbox') {
+      if (!el.checked) return false;
+    } else {
+      if (!el.value || el.value.trim() === '') return false;
+      if (el.type === 'email' && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(el.value.trim())) return false;
+      if (el.type === 'number' && el.value !== '' && !Number.isFinite(Number(el.value))) return false;
+      if (el.min !== '' && el.value !== '' && Number(el.value) < Number(el.min)) return false;
+      if (el.max !== '' && el.value !== '' && Number(el.value) > Number(el.max)) return false;
+    }
+  }
+  if (section.id === 'sec-d') {
+    const status = educationStatus.value;
+    if (!status) return false;
+    const resultType = document.getElementById('recentResultType')?.value || '';
+    const resultValue = document.getElementById('recentResultValue')?.value || '';
+    if (status === 'Currently pursuing degree' && !validateResultValue(resultType,resultValue)) return false;
+    const completedType = document.getElementById('completedResultType')?.value || '';
+    const completedValue = document.getElementById('completedResultValue')?.value || '';
+    if (status === 'Degree completed' && !validateResultValue(completedType,completedValue)) return false;
+    if (status === 'School student' && ['Class 11','Class 12'].includes(document.getElementById('currentSchoolClass')?.value)) {
+      const score = Number(document.querySelector('[name="class10Score"]')?.value);
+      if (!Number.isFinite(score) || score < 0 || score > 100) return false;
+    }
+  }
+  if (section.id === 'sec-g' && document.getElementById('profilePhoto').files.length === 0) return false;
+  if (section.id === 'sec-j') {
+    if (!document.getElementById('declaration1').checked || !document.getElementById('declaration2').checked || !document.getElementById('declaration3').checked) return false;
+  }
+  return true;
+}
+
+function refreshContinueButton(section) {
+  const btn = section.querySelector('.continue-btn');
+  if (!btn || section.id === 'sec-j') return;
+  const valid = sectionIsExactlyComplete(section);
+  const hasRequired = section.querySelectorAll('.field[data-required="true"]').length > 0 || section.id === 'sec-d';
+  btn.disabled = hasRequired ? !valid : false;
+  btn.classList.toggle('ready', !btn.disabled);
+}
+
+function wireContinueButtons() {
+  sections.forEach(section => {
+    const btn = section.querySelector('.continue-btn');
+    if (!btn) return;
+    btn.addEventListener('click', () => {
+      if (btn.disabled) return;
+      completeSection(section);
+    });
+  });
+}
+wireContinueButtons();
+
+let autoAdvanceTimers = {};
+function maybeAutoAdvance(section) {
+  const hasRequired = section.querySelectorAll('.field[data-required="true"]').length > 0 || section.id === 'sec-d' || section.id === 'sec-g' || section.id === 'sec-j';
+  if (!hasRequired || section.dataset.state !== 'active' || !sectionRequiredValid(section)) return;
+  clearTimeout(autoAdvanceTimers[section.id]);
+  autoAdvanceTimers[section.id] = setTimeout(() => {
+    if (section.dataset.state === 'active' && sectionRequiredValid(section)) completeSection(section);
+  }, 700);
+}
+
+form.addEventListener('input', e => {
+  const section = e.target.closest('.section');
+  if (section) { refreshContinueButton(section); maybeAutoAdvance(section); }
+  updateProgress();
+});
+form.addEventListener('change', e => {
+  const section = e.target.closest('.section');
+  if (section) { refreshContinueButton(section); maybeAutoAdvance(section); }
+  updateProgress();
+});
+
+updateEducationConditionals({clearOld:false});
+
+/* ---------- SKILLS ---------- */
+const SKILLS = ["Sales","Business Development","Marketing","Social Media","Content Writing",
+  "Graphic Design","Video Editing","UI/UX","Product Management","Programming","Web Development",
+  "App Development","Data Analysis","Communication","Operations","Customer Support","Event Management","Other"];
+
+const skillsGroup = document.getElementById('skillsGroup');
+const skillLevelWrap = document.getElementById('skillLevelWrap');
+const skillLevelList = document.getElementById('skillLevelList');
+
+SKILLS.forEach(skill => {
+  const label = document.createElement('label');
+  label.className = 'choice-pill';
+  label.innerHTML = '<input type="checkbox" name="primarySkills" value="' + skill + '"><span>' + skill + '</span>';
+  skillsGroup.appendChild(label);
+});
+
+skillsGroup.addEventListener('change', () => {
+  const checked = Array.from(skillsGroup.querySelectorAll('input:checked')).map(i => i.value);
+  skillLevelList.innerHTML = '';
+  if (checked.length === 0) { skillLevelWrap.style.display = 'none'; return; }
+  skillLevelWrap.style.display = 'block';
+  checked.forEach(skill => {
+    const row = document.createElement('div');
+    row.className = 'skill-level-row';
+    const safeId = 'lvl_' + skill.replace(/[^a-z0-9]/gi,'_');
+    row.innerHTML = '<span>' + skill + '</span><select name="skillLevel_' + skill + '" id="' + safeId + '">' +
+      '<option value="Beginner">Beginner</option>' +
+      '<option value="Intermediate">Intermediate</option>' +
+      '<option value="Advanced">Advanced</option></select>';
+    skillLevelList.appendChild(row);
+  });
+});
+
+/* ---------- FILE UPLOAD HANDLING ---------- */
+function setupFileDrop(dropId, inputId, previewId, opts) {
+  const drop = document.getElementById(dropId);
+  const input = document.getElementById(inputId);
+  const preview = document.getElementById(previewId);
+
+  drop.addEventListener('click', () => input.click());
+  drop.addEventListener('dragover', e => { e.preventDefault(); drop.classList.add('drag'); });
+  drop.addEventListener('dragleave', () => drop.classList.remove('drag'));
+  drop.addEventListener('drop', e => {
+    e.preventDefault(); drop.classList.remove('drag');
+    if (e.dataTransfer.files.length) { input.files = e.dataTransfer.files; input.dispatchEvent(new Event('change')); }
+  });
+
+  input.addEventListener('change', () => {
+    const file = input.files[0];
+    if (!file) return;
+    if (file.size > 5 * 1024 * 1024) {
+      alert('File is larger than 5 MB. Please choose a smaller file.');
+      input.value = '';
+      return;
+    }
+    drop.style.display = 'none';
+    preview.style.display = 'flex';
+    if (opts && opts.showThumb) {
+      const thumb = document.getElementById(opts.thumbId);
+      const reader = new FileReader();
+      reader.onload = ev => thumb.src = ev.target.result;
+      reader.readAsDataURL(file);
+    }
+    document.getElementById(opts.nameId).textContent = file.name;
+    const section = input.closest('.section');
+    if (section) { refreshContinueButton(section); maybeAutoAdvance(section); }
+    updateProgress();
+  });
+
+  document.getElementById(opts.removeId).addEventListener('click', () => {
+    input.value = '';
+    drop.style.display = 'block';
+    preview.style.display = 'none';
+    const section = input.closest('.section');
+    if (section) refreshContinueButton(section);
+    updateProgress();
+  });
+}
+
+setupFileDrop('photoDrop','profilePhoto','photoPreview',{showThumb:true, thumbId:'photoThumb', nameId:'photoName', removeId:'photoRemove'});
+setupFileDrop('govIdDrop','govIdDocument','govIdPreview',{showThumb:false, nameId:'govIdName', removeId:'govIdRemove'});
+setupFileDrop('panDrop','panDocument','panPreview',{showThumb:false, nameId:'panName', removeId:'panRemove'});
+
+/* ---------- PROGRESS BAR (section-based) ---------- */
+/* ---------- FIELD-BASED PROGRESS ---------- */
+/*
+  Progress is based only on required/relevant fields.
+  Radio/checkbox options are NOT counted as separate progress items.
+  A section reaches 100% only when every required/relevant field is valid.
+*/
+function getRelevantRequiredFields(section) {
+  return Array.from(section.querySelectorAll('input, select, textarea')).filter(el => {
+    if (el.disabled) return false;
+    if (el.type === 'hidden') return false;
+    if (el.closest('[hidden]')) return false;
+    const field = el.closest('.field');
+    if (field && field.style.display === 'none') return false;
+
+    // Do not count optional fields.
+    if (!el.required && !(field && field.dataset.required === 'true')) return false;
+
+    // Radio/checkbox groups count as ONE requirement, not multiple options.
+    if (el.type === 'radio' || el.type === 'checkbox') {
+      const groupName = el.name;
+      if (!groupName) return false;
+      const first = section.querySelector(
+        'input[type="' + el.type + '"][name="' + CSS.escape(groupName) + '"]'
+      );
+      return first === el;
+    }
+
+    return true;
+  });
+}
+
+function isFieldValidForProgress(el, section) {
+  if (el.disabled) return true;
+
+  if (el.type === 'radio') {
+    return !!section.querySelector('input[type="radio"][name="' +
+      CSS.escape(el.name) + '"]:checked');
+  }
+
+  if (el.type === 'checkbox') {
+    return el.checked;
+  }
+
+  if (!el.value || !el.value.trim()) return false;
+
+  // Use the browser's existing validation rules where possible.
+  if (typeof el.checkValidity === 'function' && !el.checkValidity()) return false;
+
+  return true;
+}
+
+function getSectionCompletion(section) {
+  const fields = getRelevantRequiredFields(section);
+  if (!fields.length) return 100;
+
+  let valid = 0;
+  fields.forEach(field => {
+    if (isFieldValidForProgress(field, section)) valid++;
+  });
+
+  return Math.round((valid / fields.length) * 100);
+}
+
+function updateSectionProgress(section) {
+  const pct = getSectionCompletion(section);
+  const badge = section.querySelector('.section-completion');
+
+  if (badge) {
+    badge.textContent = pct + '%';
+    badge.setAttribute('aria-label', 'Section ' + pct + '% complete');
+  }
+
+  section.dataset.completion = String(pct);
+  return pct;
+}
+
+function updateAllSectionProgress() {
+  sections.forEach(updateSectionProgress);
+
+  // Overall progress is the average of section completion percentages.
+  // Optional fields and individual radio/checkbox choices do not add progress.
+  const values = sections.map(getSectionCompletion);
+  const overall = values.length
+    ? Math.round(values.reduce((a, b) => a + b, 0) / values.length)
+    : 0;
+
+  const bar = document.getElementById('progressBar');
+  const text = document.getElementById('overallProgressText');
+
+  if (bar) bar.style.width = overall + '%';
+  if (text) text.textContent = overall + '% complete';
+}
+
+updateAllSectionProgress();
+
+
+// Backward-compatible alias for existing handlers.
+function updateProgress() {
+  updateAllSectionProgress();
+}
+
+
+/* ---------- STRICT 100% SECTION GATE ---------- */
+function sectionIsExactlyComplete(section) {
+  return getSectionCompletion(section) === 100;
+}
+
+
+/* Keep section percentages live while the user fills the form. */
+document.querySelectorAll('#onboardForm input, #onboardForm select, #onboardForm textarea')
+  .forEach(el => {
+    ['input', 'change', 'blur'].forEach(evt => {
+      el.addEventListener(evt, () => {
+        const section = el.closest('.section');
+        if (section) updateSectionProgress(section);
+        updateAllSectionProgress();
+      });
+    });
+  });
+
+/* ---------- FINAL VALIDATION HELPERS (submit-time safety net) ---------- */
+function fileToBase64(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
+
+function validateAllRequired() {
+  let valid = true;
+  let firstInvalidSection = null;
+  sections.forEach(section => {
+    if (!sectionIsExactlyComplete(section)) {
+      valid = false;
+      if (!firstInvalidSection) firstInvalidSection = section;
+    }
+  });
+  return { valid, firstInvalidSection };
+}
+
+/* ---------- SUBMIT ---------- */
+form.addEventListener('submit', async function(e) {
+  e.preventDefault();
+
+  const { valid, firstInvalidSection } = validateAllRequired();
+  if (!valid) {
+    if (firstInvalidSection.dataset.state === 'locked') {
+      setSectionState(firstInvalidSection, 'active');
+    }
+    expandSection(firstInvalidSection);
+    if (firstInvalidSection.id === 'sec-j') {
+      document.getElementById('declarationError').style.display = 'block';
+    }
+    if (firstInvalidSection.id === 'sec-g') {
+      document.getElementById('photoError').style.display = 'block';
+    }
+    return;
+  }
+
+  const submitBtn = document.getElementById('submitBtn');
+  submitBtn.disabled = true;
+  document.getElementById('submitOverlay').style.display = 'flex';
+
+  try {
+    const postForm = document.createElement('form');
+    postForm.action = GOOGLE_SCRIPT_URL;
+    postForm.method = 'POST';
+    postForm.target = 'hiddenTargetFrame';
+    postForm.style.display = 'none';
+
+    function addHidden(name, value) {
+      const inp = document.createElement('input');
+      inp.type = 'hidden'; inp.name = name; inp.value = value == null ? '' : value;
+      postForm.appendChild(inp);
+    }
+
+    const formData = new FormData(form);
+    for (const [key, value] of formData.entries()) {
+      addHidden(key, value);
+    }
+
+    const photoFile = document.getElementById('profilePhoto').files[0];
+    const govIdFile = document.getElementById('govIdDocument').files[0];
+    const panFile = document.getElementById('panDocument').files[0];
+
+    if (photoFile) {
+      const data = await fileToBase64(photoFile);
+      addHidden('profilePhoto_base64', data);
+      addHidden('profilePhoto_name', photoFile.name);
+      addHidden('profilePhoto_type', photoFile.type);
+    }
+    if (govIdFile) {
+      const data = await fileToBase64(govIdFile);
+      addHidden('govIdDocument_base64', data);
+      addHidden('govIdDocument_name', govIdFile.name);
+      addHidden('govIdDocument_type', govIdFile.type);
+    }
+    if (panFile) {
+      const data = await fileToBase64(panFile);
+      addHidden('panDocument_base64', data);
+      addHidden('panDocument_name', panFile.name);
+      addHidden('panDocument_type', panFile.type);
+    }
+
+    addHidden('submittedAt', new Date().toISOString());
+
+    document.body.appendChild(postForm);
+
+    const iframe = document.getElementById('hiddenTargetFrame');
+    iframe.addEventListener('load', function onLoad() {
+      iframe.removeEventListener('load', onLoad);
+      document.getElementById('submitOverlay').style.display = 'none';
+      form.style.display = 'none';
+      document.getElementById('successScreen').style.display = 'block';
+      window.scrollTo({top:0, behavior:'smooth'});
+    });
+
+    postForm.submit();
+
+  } catch (err) {
+    document.getElementById('submitOverlay').style.display = 'none';
+    submitBtn.disabled = false;
+    alert('Something went wrong while submitting. Please check your connection and try again.');
+    console.error(err);
+  }
+});
+</script>
+
+</body>
+</html>
